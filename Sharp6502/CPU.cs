@@ -12,7 +12,9 @@ namespace Sharp6502
 
         #region Static Fields
         public static OpCode CurrentInstruction { get; private set; }
+        public static UInt16 CurrentInstructionAddress => AddressBus.Bus;
         public static IList<byte> CurrentInstructionBytes { get; private set; }
+        public static bool IsInteractive { get; private set; }
         public static bool IsPoweredOn { get; private set; }
         public static UInt64 NumClocks { get; private set; }
         public static UInt16 ProgramCounter { get; private set; }
@@ -47,21 +49,28 @@ namespace Sharp6502
             {
                 return;
             }
-            ProgramCounter = 0x0000;
+            Initialize();
             IsPoweredOn = true;
             Console.WriteLine("CPU powered on!");
         }
 
-        public static void Run(bool interactive = false)
+        public static void Run(bool isInteractive = false)
         {
+            IsInteractive = isInteractive;
+            if (!IsPoweredOn)
+            {
+                PowerOn();
+            }
             Console.WriteLine("Running CPU...");
-            if (interactive)
+            if (IsInteractive)
             {
                 Console.WriteLine("Press any key to shutdown...");
             }
             NumClocks = 0;
             _totalClock = Stopwatch.StartNew();
             _clock = Stopwatch.StartNew();
+            
+            FetchInstruction(false); // Fetch first instruction
             while (IsPoweredOn)
             {
                 Tick();
@@ -77,10 +86,8 @@ namespace Sharp6502
 
         public static async Task RunInteractiveAsync()
         {
-            PowerOn();
             var task = RunAsync(interactive: true);
-            Console.ReadKey(intercept: false);
-            PowerOff();
+            while (IsPoweredOn) {}
             await task;
         }
 
@@ -113,17 +120,38 @@ namespace Sharp6502
         private static void Execute()
         {
             CurrentInstruction.Execute(CurrentInstructionBytes);
+            if (IsInteractive)
+            {
+                Console.Write("0x{0:X4} ", CurrentInstructionAddress);
+                Console.Write(CurrentInstruction.Name);
+                foreach (var instructionByte in CurrentInstructionBytes)
+                {
+                    Console.Write(" 0x{0:X2} ", instructionByte);
+                }
+                Console.Write("Continue (y/n) ");
+                
+                var key = Console.ReadKey();
+                Console.WriteLine();
+                if (key.KeyChar == 'n')
+                {
+                    PowerOff();
+                }
+            }
         }
 
-        private static void FetchInstruction()
+        private static void FetchInstruction(bool increment = true)
         {
-            ProgramCounter++;
+            if (increment)
+            {
+                ProgramCounter++;
+            }
             AddressBus.Bus = ProgramCounter;
             CurrentInstruction = InstructionSet.ConvertToOpCode(Memory.Data[AddressBus.Bus]);
             if (CurrentInstruction == null)
             {
                 throw new Exception("Fetched instruction was null");
             }
+            RemainingInstructionCycles = CurrentInstruction.Cycles;
             CurrentInstructionBytes.Clear();
             for (var i = 0; i < CurrentInstruction.InstructionBytes; i++)
             {
@@ -131,11 +159,8 @@ namespace Sharp6502
             }
             ProgramCounter += (UInt16)(CurrentInstruction.InstructionBytes - 0x01);
         }
-        #endregion
 
-        #endregion
-
-        static CPU()
+        private static void Initialize()
         {
             CurrentInstructionBytes = new List<byte>();
             NumClocks = 0;
@@ -150,6 +175,14 @@ namespace Sharp6502
             InstructionRegister = new Register();
             ProcessorStatusRegister = new Register();
             StackPointer = new Register();
+        }
+        #endregion
+
+        #endregion
+
+        static CPU()
+        {
+            Initialize();
         }
     }
 
