@@ -4,37 +4,18 @@ using System.Threading.Tasks;
 
 namespace Sharp6502.Processors
 {
-    public class CPU
+    public static class CPU
     {
         #region Public
 
-        #region Constructors
-        public CPU(ClockSpeed speed = ClockSpeed.OneMegahertz)
-        {
-            Speed = speed;
-            _clockSpeedToTicks = (long)Speed;
-        }
-        #endregion
-
         #region Members
-        public bool IsPoweredOn { get; private set; }
-        public ulong NumClocks { get; private set; }
-        public ClockSpeed Speed { get; private set; }
+        public static bool IsPoweredOn { get; private set; }
+        public static ulong NumClocks { get; private set; }
+        public static ClockSpeed Speed { get; set; }
         #endregion
 
         #region Member Methods
-        public void PowerUp()
-        {
-            Console.WriteLine("CPU powering on...");
-            if (IsPoweredOn)
-            {
-                return;
-            }
-            IsPoweredOn = true;
-            Console.WriteLine("CPU powered on!");
-        }
-
-        public void PowerDown()
+        public static void PowerDown()
         {
             Console.WriteLine("CPU powering off...");
             if (!IsPoweredOn)
@@ -45,7 +26,18 @@ namespace Sharp6502.Processors
             Console.WriteLine("CPU powered off!");
         }
 
-        public void Run(bool interactive = false)
+        public static void PowerUp()
+        {
+            Console.WriteLine("CPU powering on...");
+            if (IsPoweredOn)
+            {
+                return;
+            }
+            IsPoweredOn = true;
+            Console.WriteLine("CPU powered on!");
+        }
+
+        public static void Run(bool interactive = false)
         {
             Console.WriteLine("Running CPU...");
             if (interactive)
@@ -63,12 +55,12 @@ namespace Sharp6502.Processors
             Console.WriteLine($"CPU clocks: {NumClocks}");
         }
 
-        public async Task RunAsync(bool interactive = false)
+        public static async Task RunAsync(bool interactive = false)
         {
             await Task.Run(() => Run(interactive));
         }
 
-        public async Task RunInteractiveAsync()
+        public static async Task RunInteractiveAsync()
         {
             PowerUp();
             var task = RunAsync(interactive: true);
@@ -77,7 +69,7 @@ namespace Sharp6502.Processors
             await task;
         }
 
-        public void Tick()
+        public static void Tick()
         {
             while (_clock.ElapsedTicks < _clockSpeedToTicks)
             {
@@ -88,16 +80,22 @@ namespace Sharp6502.Processors
         #endregion
 
         #endregion
-    
+
         #region Private
 
         #region Members
-        private Stopwatch _clock { get; set; }
-        private Stopwatch _totalClock { get; set; }
-        private long _clockSpeedToTicks { get; set; }
+        private static Stopwatch _clock;
+        private static Stopwatch _totalClock;
+        private static long _clockSpeedToTicks { get; set; }
         #endregion
 
         #endregion
+
+        static CPU()
+        {
+            Speed = ClockSpeed.OneMegahertz;
+            _clockSpeedToTicks = (long)Speed;
+        }
     }
 
     public enum ClockSpeed : long

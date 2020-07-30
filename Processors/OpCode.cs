@@ -1,6 +1,8 @@
+using System;
+
 namespace Sharp6502.Processors
 {
-    public readonly struct OpCode
+    public class OpCode
     {
         #region Public
 
@@ -11,15 +13,22 @@ namespace Sharp6502.Processors
             AddressingMode mode,
             byte instructionBytes,
             byte cycles,
+            Action<byte[]> action,
             byte flags = 0x00
         )
         {
+            if (action == null)
+            {
+                throw new Exception("OpCode action must be non-null");
+            }
+            _action = action;
+
             Code = code;
-            Name = name;
-            Mode = mode;
-            InstructionBytes = instructionBytes;
             Cycles = cycles;
             Flags = flags;
+            InstructionBytes = instructionBytes;
+            Mode = mode;
+            Name = name;
         }
         #endregion
 
@@ -30,6 +39,25 @@ namespace Sharp6502.Processors
         public readonly byte InstructionBytes;
         public readonly byte Cycles;
         public readonly byte Flags;
+        #endregion
+
+        #region Member Methods
+        public void Execute(params byte[] instructionBytes)
+        {
+            if (instructionBytes.Length != InstructionBytes)
+            {
+                throw new Exception($"{Name} ({Code}): Expected {(uint)InstructionBytes} arguments, got {instructionBytes.Length}");
+            }
+            _action(instructionBytes);
+        }
+        #endregion
+
+        #endregion
+
+        #region Private
+
+        #region Members
+        private readonly Action<byte[]> _action;
         #endregion
 
         #endregion

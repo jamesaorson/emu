@@ -8,8 +8,7 @@ namespace Sharp6502
     {
         static async Task Main(string[] args)
         {
-            var cpu = new CPU(speed: ClockSpeed.OneMegahertz);
-            await cpu.RunInteractiveAsync();
+            await CPU.RunInteractiveAsync();
         }
     }
 }
