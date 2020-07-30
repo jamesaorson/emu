@@ -5,7 +5,7 @@ namespace Sharp6502
         #region Public
 
         #region Members
-        public byte Value;
+        public byte Value { get; set; }
         #endregion
 
         #region Member Methods
