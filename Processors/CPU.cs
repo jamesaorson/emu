@@ -10,12 +10,21 @@ namespace Sharp6502.Processors
 
         #region Members
         public static bool IsPoweredOn { get; private set; }
-        public static ulong NumClocks { get; private set; }
+        public static UInt64 NumClocks { get; private set; }
+        public static UInt16 ProgramCounter { get; private set; }
+        public static byte ProgramCounterHigh => (byte)((ProgramCounter >> (UInt16)0x0004) & (UInt16)0x00FF);
+        public static byte ProgramCounterLow => (byte)(ProgramCounter & (UInt16)0x00FF);
         public static ClockSpeed Speed { get; set; }
+        public static Register Accumulator { get; private set; }
+        public static Register IndexRegisterX { get; private set; }
+        public static Register IndexRegisterY { get; private set; }
+        public static Register InstructionRegister { get; private set; }
+        public static Register ProcessorStatusRegister { get; private set; }
+        public static Register StackPointer { get; private set; }
         #endregion
 
         #region Member Methods
-        public static void PowerDown()
+        public static void PowerOff()
         {
             Console.WriteLine("CPU powering off...");
             if (!IsPoweredOn)
@@ -26,13 +35,14 @@ namespace Sharp6502.Processors
             Console.WriteLine("CPU powered off!");
         }
 
-        public static void PowerUp()
+        public static void PowerOn()
         {
             Console.WriteLine("CPU powering on...");
             if (IsPoweredOn)
             {
                 return;
             }
+            ProgramCounter = 0x0000;
             IsPoweredOn = true;
             Console.WriteLine("CPU powered on!");
         }
@@ -62,10 +72,10 @@ namespace Sharp6502.Processors
 
         public static async Task RunInteractiveAsync()
         {
-            PowerUp();
+            PowerOn();
             var task = RunAsync(interactive: true);
             Console.ReadKey(intercept: false);
-            PowerDown();
+            PowerOff();
             await task;
         }
 
@@ -93,8 +103,17 @@ namespace Sharp6502.Processors
 
         static CPU()
         {
+            NumClocks = 0;
+            ProgramCounter = 0x0000;
             Speed = ClockSpeed.OneMegahertz;
             _clockSpeedToTicks = (long)Speed;
+            
+            Accumulator = new Register();
+            IndexRegisterX = new Register();
+            IndexRegisterY = new Register();
+            InstructionRegister = new Register();
+            ProcessorStatusRegister = new Register();
+            StackPointer = new Register();
         }
     }
 
