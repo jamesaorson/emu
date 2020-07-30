@@ -1,11 +1,11 @@
 namespace Sharp6502
 {
-    public struct Register
+    public class Register
     {
         #region Public
 
         #region Members
-        public byte Value { get; set; }
+        public byte Value;
         #endregion
 
         #region Member Methods

@@ -1,13 +1,31 @@
+using System;
+
 namespace Sharp6502.Buses
 {
     public static class DataBus
     {
         #region Public
 
-        #region Members
-        public static byte Bus { get; set; }
+        #region Static Fields
+        public static UInt16 Bus { get; set; }
         #endregion
 
         #endregion
+
+        #region Internal
+
+        #region Static Methods
+        internal static void Initialize()
+        {
+            Bus = 0x0000;
+        }
+        #endregion
+
+        #endregion
+
+        static DataBus()
+        {
+            Initialize();
+        }
     }
 }

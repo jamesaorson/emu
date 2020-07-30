@@ -6,10 +6,26 @@ namespace Sharp6502.Buses
     {
         #region Public
 
-        #region Members
+        #region Static Fields
         public static UInt16 Bus { get; set; }
         #endregion
 
         #endregion
+
+        #region Internal
+
+        #region Static Methods
+        internal static void Initialize()
+        {
+            Bus = 0x0000;
+        }
+        #endregion
+
+        #endregion
+
+        static AddressBus()
+        {
+            Initialize();
+        }
     }
 }

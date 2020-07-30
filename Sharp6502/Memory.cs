@@ -11,6 +11,7 @@ namespace Sharp6502
         #endregion
 
         #region Static Methods
+
         public static void LoadProgram(byte[] data)
         {
             Initialize();
@@ -27,10 +28,10 @@ namespace Sharp6502
 
         #endregion
 
-        #region Private
+        #region Internal
 
         #region Static Methods
-        private static void Initialize()
+        internal static void Initialize()
         {
             Data = new byte[UInt16.MaxValue];
         }
