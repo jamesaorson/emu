@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Sharp6502.Processors
+namespace Sharp6502
 {
     internal static class InstructionSet
     {

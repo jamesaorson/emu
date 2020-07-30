@@ -1,14 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
-using Sharp6502.Processors;
+﻿using System.Threading.Tasks;
+using Sharp6502;
 
-namespace Sharp6502
+class Program
 {
-    class Program
+    static async Task Main(string[] args)
     {
-        static async Task Main(string[] args)
-        {
-            await CPU.RunInteractiveAsync();
-        }
+        await CPU.RunInteractiveAsync();
     }
 }

@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace Sharp6502.Processors
+namespace Sharp6502
 {
     public static class CPU
     {

@@ -1,4 +1,4 @@
-namespace Sharp6502.Processors
+namespace Sharp6502
 {
     public struct Register
     {
