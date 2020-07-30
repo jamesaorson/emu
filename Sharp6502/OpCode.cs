@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Sharp6502
 {
@@ -13,7 +14,7 @@ namespace Sharp6502
             AddressingMode mode,
             byte instructionBytes,
             byte cycles,
-            Action<byte[]> action,
+            Action<IList<byte>> action,
             byte flags = 0x00
         )
         {
@@ -42,11 +43,11 @@ namespace Sharp6502
         #endregion
 
         #region Member Methods
-        public void Execute(params byte[] instructionBytes)
+        public void Execute(IList<byte> instructionBytes)
         {
-            if (instructionBytes.Length != InstructionBytes)
+            if (instructionBytes.Count != InstructionBytes)
             {
-                throw new Exception($"{Name} ({Code}): Expected {(uint)InstructionBytes} arguments, got {instructionBytes.Length}");
+                throw new Exception($"{Name} ({Code}): Expected {(uint)InstructionBytes} arguments, got {instructionBytes.Count}");
             }
             _action(instructionBytes);
         }
@@ -57,7 +58,7 @@ namespace Sharp6502
         #region Private
 
         #region Members
-        private readonly Action<byte[]> _action;
+        private readonly Action<IList<byte>> _action;
         #endregion
 
         #endregion
