@@ -14,15 +14,15 @@ namespace Sharp6502
             AddressingMode mode,
             byte instructionBytes,
             byte cycles,
-            Action<IList<byte>> action,
+            Action<IList<byte>> command,
             byte flags = 0x00
         )
         {
-            if (action == null)
+            if (command == null)
             {
-                throw new Exception("OpCode action must be non-null");
+                throw new Exception("OpCode command must be non-null");
             }
-            _action = action;
+            _command = command;
 
             Code = code;
             Cycles = cycles;
@@ -49,7 +49,7 @@ namespace Sharp6502
             {
                 throw new Exception($"{Name} ({Code}): Expected {(uint)InstructionBytes} arguments, got {instructionBytes.Count}");
             }
-            _action(instructionBytes);
+            _command(instructionBytes);
         }
         #endregion
 
@@ -58,7 +58,7 @@ namespace Sharp6502
         #region Private
 
         #region Members
-        private readonly Action<IList<byte>> _action;
+        private readonly Action<IList<byte>> _command;
         #endregion
 
         #endregion

@@ -120,6 +120,22 @@ namespace Sharp6502
 
         #endregion
 
+        #region Internal
+
+        #region Static Methods
+        internal static void AdvanceProgramCounter(byte advancement)
+        {
+            ProgramCounter += advancement;
+        }
+
+        internal static void SetStatusFlag(ProcessorStatusFlags flag)
+        {
+            ProcessorStatusRegister |= flag;
+        }
+        #endregion
+
+        #endregion
+
         #region Private
 
         #region Static Fields
