@@ -198,12 +198,4 @@ namespace Sharp6502
             Initialize();
         }
     }
-
-    public enum ClockSpeed : long
-    {
-        OneMegahertz = 1000,
-        TwoMegahertz = 500,
-        ThreeMegahertz = 333,
-        FourMegahertz = 250,
-    }
 }
