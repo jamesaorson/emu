@@ -140,7 +140,7 @@ namespace Sharp6502
                     instructionBytes: 2,
                     cycles: 7,
                     command: (instructionBytes) => {
-                        CPU.SetStatusFlag(ProcessorStatusFlags.B);
+                        ALU.SetStatusFlag(ProcessorStatusFlags.B);
                         // TODO: RTI
                     }
                 ),
@@ -150,7 +150,9 @@ namespace Sharp6502
                     AddressingMode.IndexedIndirect,
                     instructionBytes: 2,
                     cycles: 6,
-                    command: (instructionBytes) => {}
+                    command: (instructionBytes) => {
+                        
+                    }
                 ),
                 [0x04] = new OpCode(
                     0x04,

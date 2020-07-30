@@ -23,12 +23,6 @@ namespace Sharp6502
         public static byte ProgramCounterLow => (byte)(ProgramCounter & (UInt16)0x00FF);
         public static byte RemainingInstructionCycles { get; private set; }
         public static ClockSpeed Speed { get; set; }
-        public static Register Accumulator { get; private set; }
-        public static Register IndexRegisterX { get; private set; }
-        public static Register IndexRegisterY { get; private set; }
-        public static Register InstructionRegister { get; private set; }
-        public static Register ProcessorStatusRegister { get; private set; }
-        public static Register StackPointer { get; private set; }
         #endregion
 
         #region Static Methods
@@ -127,11 +121,6 @@ namespace Sharp6502
         {
             ProgramCounter += advancement;
         }
-
-        internal static void SetStatusFlag(ProcessorStatusFlags flag)
-        {
-            ProcessorStatusRegister |= flag;
-        }
         #endregion
 
         #endregion
@@ -191,19 +180,17 @@ namespace Sharp6502
 
         private static void Initialize()
         {
+            ALU.Initialize();
+            AddressBus.Initialize();
+            DataBus.Initialize();
+            Memory.Initialize();
+
             CurrentInstructionBytes = new List<byte>();
             NumClocks = 0;
             ProgramCounter = 0x0000;
             RemainingInstructionCycles = 1;
             Speed = ClockSpeed.OneMegahertz;
             _clockSpeedToTicks = (long)Speed;
-            
-            Accumulator = new Register();
-            IndexRegisterX = new Register();
-            IndexRegisterY = new Register();
-            InstructionRegister = new Register();
-            ProcessorStatusRegister = new Register();
-            StackPointer = new Register();
         }
         #endregion
 
