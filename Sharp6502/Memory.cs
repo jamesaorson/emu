@@ -6,15 +6,41 @@ namespace Sharp6502
     {
         #region Public
 
-        #region Members
+        #region Static Fields
         public static byte[] Data { get; private set; }
+        #endregion
+
+        #region Static Methods
+        public static void LoadProgram(byte[] data)
+        {
+            Initialize();
+            for (var i = 0; i < UInt16.MaxValue; i++)
+            {
+                if (i >= data.Length)
+                {
+                    break;
+                }
+                Data[i] = data[i];
+            }
+        }
+        #endregion
+
+        #endregion
+
+        #region Private
+
+        #region Static Methods
+        private static void Initialize()
+        {
+            Data = new byte[UInt16.MaxValue];
+        }
         #endregion
 
         #endregion
 
         static Memory()
         {
-            Data = new byte[(int)Math.Pow(2, 16)];
+            Initialize();
         }
     }
 }

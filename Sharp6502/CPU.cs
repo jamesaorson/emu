@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using Sharp6502.Buses;
 
@@ -31,6 +32,16 @@ namespace Sharp6502
         #endregion
 
         #region Static Methods
+        public static void LoadProgram(string filepath)
+        {
+            LoadProgram(File.ReadAllBytes(filepath));
+        }
+        
+        public static void LoadProgram(byte[] program)
+        {
+            Memory.LoadProgram(program);
+        }
+
         public static void PowerOff()
         {
             Console.WriteLine("CPU powering off...");
@@ -54,13 +65,14 @@ namespace Sharp6502
             Console.WriteLine("CPU powered on!");
         }
 
-        public static void Run(bool isInteractive = false)
+        public static void Run(string filepath, bool isInteractive = false)
         {
             IsInteractive = isInteractive;
             if (!IsPoweredOn)
             {
                 PowerOn();
             }
+            LoadProgram(filepath);
             Console.WriteLine("Running CPU...");
             if (IsInteractive)
             {
@@ -79,14 +91,14 @@ namespace Sharp6502
             Console.WriteLine($"CPU clocks: {NumClocks}");
         }
 
-        public static async Task RunAsync(bool interactive = false)
+        public static async Task RunAsync(string filepath, bool interactive = false)
         {
-            await Task.Run(() => Run(interactive));
+            await Task.Run(() => Run(filepath, interactive));
         }
 
-        public static async Task RunInteractiveAsync()
+        public static async Task RunInteractiveAsync(string filepath)
         {
-            var task = RunAsync(interactive: true);
+            var task = RunAsync(filepath, interactive: true);
             while (IsPoweredOn) {}
             await task;
         }
@@ -149,6 +161,7 @@ namespace Sharp6502
             CurrentInstruction = InstructionSet.ConvertToOpCode(Memory.Data[AddressBus.Bus]);
             if (CurrentInstruction == null)
             {
+                Console.Write("0x{0:X4} ", AddressBus.Bus); Console.WriteLine("0x{0:X2}", Memory.Data[AddressBus.Bus]);
                 throw new Exception("Fetched instruction was null");
             }
             RemainingInstructionCycles = CurrentInstruction.Cycles;
