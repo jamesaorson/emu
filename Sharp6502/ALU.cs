@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace Sharp6502
 {
     public static class ALU
@@ -19,14 +21,18 @@ namespace Sharp6502
         #region Internal
 
         #region Static Methods
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static byte AddToIndexRegisterX(byte value)
         {
             IndexRegisterX.Value += value;
             return IndexRegisterX.Value;
         }
         
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static byte BitwiseAndTransient(byte value) => (byte)(Accumulator.Value & value);
 
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void BitwiseOr(byte value)
         {
             Accumulator.Value = BitwiseOrTransient(value);
@@ -34,6 +40,7 @@ namespace Sharp6502
             UpdateZeroStatusFlag(Accumulator.Value);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static byte BitwiseOrTransient(byte value) => (byte)(Accumulator.Value | value);
 
         internal static void Initialize()
@@ -46,16 +53,19 @@ namespace Sharp6502
             StackPointer = new Register();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void SetStatusFlag(ProcessorStatusFlags flag)
         {
             ProcessorStatusRegister.Value |= (byte)flag;
         }
         
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void UnsetStatusFlag(ProcessorStatusFlags flag)
         {
             ProcessorStatusRegister.Value &= (byte)((byte)flag ^ (byte)0xFF);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void UpdateNegativeStatusFlag(byte value)
         {
             if ((value & 0x80) != 0x00)
@@ -68,6 +78,7 @@ namespace Sharp6502
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void UpdateZeroStatusFlag(byte value)
         {
             if (value == 0x00)

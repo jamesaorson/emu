@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Sharp6502
 {
@@ -53,6 +55,7 @@ namespace Sharp6502
         public const string BPL = "BPL";
         public const string BRA = "BRA";
         public const string BRK = "BRK";
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CommonBrk(IList<byte> _)
         {
             ALU.SetStatusFlag(ProcessorStatusFlags.B);
@@ -82,6 +85,7 @@ namespace Sharp6502
         public const string LSR = "LSR";
         public const string NOP = "NOP";
         public const string ORA = "ORA";
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CommonOra(byte value)
         {
             ALU.BitwiseOr(value);
@@ -126,6 +130,7 @@ namespace Sharp6502
         public const string TAY = "TAY";
         public const string TRB = "TRB";
         public const string TSB = "TSB";
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CommonTsb(byte value, IList<byte> instructionBytes)
         {
             value = ALU.BitwiseOrTransient(value);
