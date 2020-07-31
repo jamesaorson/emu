@@ -169,7 +169,10 @@ namespace Sharp6502
                     AddressingMode.ZeroPage,
                     instructionBytes: 2,
                     cycles: 3,
-                    command: (instructionBytes) => {}
+                    command: (instructionBytes) => {
+                        var value = CPU.ZeroPageAddress(instructionBytes[1]);
+                        ALU.BitwiseOr(value);
+                    }
                 ),
                 [0x06] = new OpCode(
                     0x06,
@@ -201,7 +204,10 @@ namespace Sharp6502
                     AddressingMode.Immediate,
                     instructionBytes: 2,
                     cycles: 2,
-                    command: (instructionBytes) => {}
+                    command: (instructionBytes) => {
+                        var value = CPU.ImmediateAddress(instructionBytes[1]);
+                        ALU.BitwiseOr(value);
+                    }
                 ),
                 [0x0A] = new OpCode(
                     0x0A,
@@ -225,7 +231,10 @@ namespace Sharp6502
                     AddressingMode.Absolute,
                     instructionBytes: 3,
                     cycles: 4,
-                    command: (instructionBytes) => {}
+                    command: (instructionBytes) => {
+                        var value = CPU.AbsoluteAddress(instructionBytes[1], instructionBytes[2]);
+                        ALU.BitwiseOr(value);
+                    }
                 ),
                 [0x0E] = new OpCode(
                     0x0E,

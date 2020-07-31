@@ -122,13 +122,36 @@ namespace Sharp6502
             ProgramCounter += advancement;
         }
 
-        internal static byte IndexedIndirectAddress(byte value)
+        internal static UInt16 CombineLowAndHighAddress(byte lowOrderAddress, byte highOrderOrder)
         {
-            var memoryLocation = ALU.AddToIndexRegisterX(value);
-            UInt16 lowOrderAddress = (UInt16)(FetchMemoryAddress(value) & 0x00FF);
-            UInt16 highOrderAddress = (UInt16)((FetchMemoryAddress((UInt16)(value + (byte)0x01)) << 4) & 0xFF00);
-            return FetchMemoryAddress((UInt16)(highOrderAddress | lowOrderAddress));
+            var combinedAddress = (UInt16)((highOrderOrder << 4) & 0xFF00);
+            combinedAddress = (UInt16)(combinedAddress | lowOrderAddress);
+            return combinedAddress;
         }
+
+        #region Addressing Modes
+        internal static byte AbsoluteAddress(byte lowOrderAddress, byte highOrderAddress) => FetchMemoryAddress(
+            CombineLowAndHighAddress(lowOrderAddress, highOrderAddress)
+        );
+
+        internal static byte ImmediateAddress(byte value) => value;
+
+        internal static byte IndexedIndirectAddress(byte xOffset)
+        {
+            var memoryLocation = ALU.AddToIndexRegisterX(xOffset);
+            return FetchMemoryAddress(
+                CombineLowAndHighAddress(
+                    FetchMemoryAddress((UInt16)memoryLocation),
+                    FetchMemoryAddress((UInt16)(memoryLocation + (byte)0x01))
+                )
+            );
+        }
+
+        internal static byte ZeroPageAddress(byte address) => FetchMemoryAddress(
+            CombineLowAndHighAddress(address, (byte)0x00)
+        );
+        #endregion
+
         #endregion
 
         #endregion
