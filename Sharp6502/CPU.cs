@@ -139,13 +139,15 @@ namespace Sharp6502
             CurrentInstruction.Execute(CurrentInstructionBytes);
             if (IsInteractive)
             {
+                _clock.Stop();
+                _totalClock.Stop();
                 Console.Write("0x{0:X4} ", CurrentInstructionAddress);
-                Console.Write(CurrentInstruction.Name);
-                foreach (var instructionByte in CurrentInstructionBytes)
+                Console.Write("0x{0:X2} ", CurrentInstructionBytes[0]); Console.Write(CurrentInstruction.Name);
+                for (var i = 1; i < CurrentInstructionBytes.Count; ++i)
                 {
-                    Console.Write(" 0x{0:X2} ", instructionByte);
+                    Console.Write(" 0x{0:X2}", CurrentInstructionBytes[i]);
                 }
-                Console.Write("Continue (y/n) ");
+                Console.Write(" Continue? (y/n) ");
                 
                 var key = Console.ReadKey();
                 Console.WriteLine();
@@ -153,6 +155,8 @@ namespace Sharp6502
                 {
                     PowerOff();
                 }
+                _clock.Start();
+                _totalClock.Start();
             }
         }
 
