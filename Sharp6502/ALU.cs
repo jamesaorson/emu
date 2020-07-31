@@ -2,6 +2,7 @@ namespace Sharp6502
 {
     public static class ALU
     {
+
         #region Public
 
         #region Static Fields
@@ -18,6 +19,11 @@ namespace Sharp6502
         #region Internal
 
         #region Static Methods
+        internal static byte AddToIndexRegisterX(byte value)
+        {
+            IndexRegisterX.Value += value;
+            return IndexRegisterX.Value;
+        }
         internal static void BitwiseOr(byte value)
         {
             Accumulator.Value |= (byte)value;
@@ -39,12 +45,21 @@ namespace Sharp6502
         {
             ProcessorStatusRegister.Value |= (byte)flag;
         }
+        
+        internal static void UnsetStatusFlag(ProcessorStatusFlags flag)
+        {
+            ProcessorStatusRegister.Value &= (byte)((byte)flag ^ (byte)0xFF);
+        }
 
         internal static void UpdateNegativeStatusFlag(byte value)
         {
             if ((value & 0x80) != 0x00)
             {
                 SetStatusFlag(ProcessorStatusFlags.Negative);
+            }
+            else
+            {
+                UnsetStatusFlag(ProcessorStatusFlags.Negative);
             }
         }
 
@@ -53,6 +68,10 @@ namespace Sharp6502
             if (value == 0x00)
             {
                 SetStatusFlag(ProcessorStatusFlags.Zero);
+            }
+            else
+            {
+                UnsetStatusFlag(ProcessorStatusFlags.Zero);
             }
         }
         #endregion

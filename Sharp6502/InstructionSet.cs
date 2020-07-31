@@ -151,7 +151,8 @@ namespace Sharp6502
                     instructionBytes: 2,
                     cycles: 6,
                     command: (instructionBytes) => {
-                        
+                        var value = CPU.IndexedIndirectAddress(instructionBytes[1]);
+                        ALU.BitwiseOr(value);
                     }
                 ),
                 [0x04] = new OpCode(

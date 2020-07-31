@@ -121,6 +121,14 @@ namespace Sharp6502
         {
             ProgramCounter += advancement;
         }
+
+        internal static byte IndexedIndirectAddress(byte value)
+        {
+            var memoryLocation = ALU.AddToIndexRegisterX(value);
+            UInt16 lowOrderAddress = (UInt16)(FetchMemoryAddress(value) & 0x00FF);
+            UInt16 highOrderAddress = (UInt16)((FetchMemoryAddress((UInt16)(value + (byte)0x01)) << 4) & 0xFF00);
+            return FetchMemoryAddress((UInt16)(highOrderAddress | lowOrderAddress));
+        }
         #endregion
 
         #endregion
@@ -136,7 +144,6 @@ namespace Sharp6502
         #region Static Methods
         private static void Execute()
         {
-            CurrentInstruction.Execute(CurrentInstructionBytes);
             if (IsInteractive)
             {
                 _clock.Stop();
@@ -158,6 +165,12 @@ namespace Sharp6502
                 _clock.Start();
                 _totalClock.Start();
             }
+            CurrentInstruction.Execute(CurrentInstructionBytes);
+        }
+
+        private static byte FetchMemoryAddress(UInt16 address)
+        {
+            return Memory.Data[address];
         }
 
         private static void FetchInstruction(bool increment = true)
