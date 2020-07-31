@@ -129,6 +129,16 @@ namespace Sharp6502
             return combinedAddress;
         }
 
+        internal static byte FetchMemoryAddress(UInt16 address)
+        {
+            return Memory.Data[address];
+        }
+
+        internal static void SetMemoryAddress(UInt16 address, byte value)
+        {
+            Memory.Data[address] = value;
+        }
+
         #region Addressing Modes
         internal static byte AbsoluteAddress(byte lowOrderAddress, byte highOrderAddress) => FetchMemoryAddress(
             CombineLowAndHighAddress(lowOrderAddress, highOrderAddress)
@@ -189,11 +199,6 @@ namespace Sharp6502
                 _totalClock.Start();
             }
             CurrentInstruction.Execute(CurrentInstructionBytes);
-        }
-
-        private static byte FetchMemoryAddress(UInt16 address)
-        {
-            return Memory.Data[address];
         }
 
         private static void FetchInstruction(bool increment = true)

@@ -24,7 +24,7 @@ namespace Sharp6502
         public static OpCode ConvertToOpCode(string opName) => OpCodeMap.Values.Where(opCode => opCode.Name == opName)?.ToList().FirstOrDefault();
         #endregion
 
-        #region Constants
+        #region Instructions
         public const string ADC = "ADC";
         public const string AND = "AND";
         public const string ASL = "ASL";
@@ -53,6 +53,11 @@ namespace Sharp6502
         public const string BPL = "BPL";
         public const string BRA = "BRA";
         public const string BRK = "BRK";
+        public static void CommonBrk(IList<byte> _)
+        {
+            ALU.SetStatusFlag(ProcessorStatusFlags.B);
+            // TODO: RTI
+        }
         public const string BVC = "BVC";
         public const string BVS = "BVS";
         public const string CLC = "CLC";
@@ -77,6 +82,10 @@ namespace Sharp6502
         public const string LSR = "LSR";
         public const string NOP = "NOP";
         public const string ORA = "ORA";
+        public static void CommonOra(byte value)
+        {
+            ALU.BitwiseOr(value);
+        }
         public const string PHA = "PHA";
         public const string PHP = "PHP";
         public const string PHX = "PHX";
@@ -117,6 +126,12 @@ namespace Sharp6502
         public const string TAY = "TAY";
         public const string TRB = "TRB";
         public const string TSB = "TSB";
+        public static void CommonTsb(byte value, IList<byte> instructionBytes)
+        {
+            value = ALU.BitwiseOrTransient(value);
+            ALU.UpdateZeroStatusFlag(value);
+            CPU.SetMemoryAddress((UInt16)instructionBytes[1], value);
+        }
         public const string TSX = "TSX";
         public const string TXA = "TXA";
         public const string TXS = "TXS";
@@ -140,8 +155,7 @@ namespace Sharp6502
                     instructionBytes: 2,
                     cycles: 7,
                     command: (instructionBytes) => {
-                        ALU.SetStatusFlag(ProcessorStatusFlags.B);
-                        // TODO: RTI
+                        CommonBrk(instructionBytes);
                     }
                 ),
                 [0x01] = new OpCode(
@@ -152,7 +166,7 @@ namespace Sharp6502
                     cycles: 6,
                     command: (instructionBytes) => {
                         var value = CPU.IndexedIndirectAddress(instructionBytes[1]);
-                        ALU.BitwiseOr(value);
+                        CommonOra(value);
                     }
                 ),
                 [0x04] = new OpCode(
@@ -161,7 +175,10 @@ namespace Sharp6502
                     AddressingMode.ZeroPage,
                     instructionBytes: 2,
                     cycles: 5,
-                    command: (instructionBytes) => {}
+                    command: (instructionBytes) => {
+                        var value = CPU.ZeroPageAddress(instructionBytes[1]);
+                        CommonTsb(value, instructionBytes);
+                    }
                 ),
                 [0x05] = new OpCode(
                     0x05,
@@ -171,7 +188,7 @@ namespace Sharp6502
                     cycles: 3,
                     command: (instructionBytes) => {
                         var value = CPU.ZeroPageAddress(instructionBytes[1]);
-                        ALU.BitwiseOr(value);
+                        CommonOra(value);
                     }
                 ),
                 [0x06] = new OpCode(
@@ -206,7 +223,7 @@ namespace Sharp6502
                     cycles: 2,
                     command: (instructionBytes) => {
                         var value = CPU.ImmediateAddress(instructionBytes[1]);
-                        ALU.BitwiseOr(value);
+                        CommonOra(value);
                     }
                 ),
                 [0x0A] = new OpCode(
@@ -223,7 +240,10 @@ namespace Sharp6502
                     AddressingMode.Absolute,
                     instructionBytes: 3,
                     cycles: 6,
-                    command: (instructionBytes) => {}
+                    command: (instructionBytes) => {
+                        var value = CPU.AbsoluteAddress(instructionBytes[1], instructionBytes[2]);
+                        CommonTsb(value, instructionBytes);
+                    }
                 ),
                 [0x0D] = new OpCode(
                     0x0D,
@@ -233,7 +253,7 @@ namespace Sharp6502
                     cycles: 4,
                     command: (instructionBytes) => {
                         var value = CPU.AbsoluteAddress(instructionBytes[1], instructionBytes[2]);
-                        ALU.BitwiseOr(value);
+                        CommonOra(value);
                     }
                 ),
                 [0x0E] = new OpCode(

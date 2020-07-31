@@ -24,12 +24,17 @@ namespace Sharp6502
             IndexRegisterX.Value += value;
             return IndexRegisterX.Value;
         }
+        
+        internal static byte BitwiseAndTransient(byte value) => (byte)(Accumulator.Value & value);
+
         internal static void BitwiseOr(byte value)
         {
-            Accumulator.Value |= (byte)value;
+            Accumulator.Value = BitwiseOrTransient(value);
             UpdateNegativeStatusFlag(Accumulator.Value);
             UpdateZeroStatusFlag(Accumulator.Value);
         }
+
+        internal static byte BitwiseOrTransient(byte value) => (byte)(Accumulator.Value | value);
 
         internal static void Initialize()
         {
