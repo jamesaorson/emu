@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <CustomCommands>
+      <CustomCommands>
+        <Command>
+          <type>AfterBuild</type>
+          <command>cp -R Examples ${TargetDir}</command>
+        </Command>
+      </CustomCommands>
+    </CustomCommands>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="Source\Enums\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Source\Enums\AddressingMode.fs" />
+    <Compile Include="Source\Enums\ClockSpeed.fs" />
+    <Compile Include="Source\Enums\ProcessorStatusFlags.fs" />
+    <Compile Include="Source\Bus.fs" />
+    <Compile Include="Source\Register.fs" />
+    <Compile Include="Source\RAM.fs" />
+    <Compile Include="Source\Instruction.fs" />
+    <Compile Include="Source\InstructionSet.fs" />
+    <Compile Include="Source\ALU.fs" />
+    <Compile Include="Source\CPU.fs" />
+    <Compile Include="Program.fs" />
+    <PackageReference Include="FSharp.Core" Version="5.0.0-beta.*" />
+  </ItemGroup>
+</Project>
